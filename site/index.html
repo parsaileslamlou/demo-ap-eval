@@ -5,9 +5,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>On our invoice tests, the cheapest model was just as accurate</title>
+<meta name="color-scheme" content="light">
+<title>On our invoice tests, the cheapest model was just as accurate | Weighted Evals</title>
+<meta name="description" content="We tested three AI models on an invoice-review agent. A budget model made every payment decision correctly, at under 1.5% of the cost.">
+<meta property="og:title" content="On our invoice tests, the cheapest model was just as accurate">
+<meta property="og:description" content="We tested three AI models on an invoice-review agent. A budget model made every payment decision correctly, at under 1.5% of the cost.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Weighted Evals">
+<meta property="og:url" content="https://parsaileslamlou.github.io/demo-ap-eval/">
+<meta property="og:image" content="https://parsaileslamlou.github.io/demo-ap-eval/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Weighted Evals invoice-review results: 100% correct decisions, 98.5% lower model cost, 0 critical errors.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="On our invoice tests, the cheapest model was just as accurate">
+<meta name="twitter:description" content="We tested three AI models on an invoice-review agent. A budget model made every payment decision correctly, at under 1.5% of the cost.">
+<meta name="twitter:image" content="https://parsaileslamlou.github.io/demo-ap-eval/og.png">
+<meta name="twitter:image:alt" content="Weighted Evals invoice-review results: 100% correct decisions, 98.5% lower model cost, 0 critical errors.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%2318794e%22%2F%3E%3Ctext%20x%3D%2216%22%20y%3D%2223%22%20text-anchor%3D%22middle%22%20font-family%3D%22system-ui%2Csans-serif%22%20font-size%3D%2223%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3EW%3C%2Ftext%3E%3C%2Fsvg%3E">
 <style>
-:root,:root[data-theme="light"] {
+:root {
   color-scheme:light;
   --ink:#1c2127; --muted:#5b6470; --line:#e2e5e9; --accent:#18794e; --background:#ffffff; --surface:#ffffff; --tint:#edf6f0; --button-ink:#ffffff; --bar:#c9ced6;
 }
@@ -37,24 +54,26 @@ li { padding-left:2px; margin-bottom:11px; }
 .callout p:last-child { margin:0; }
 .table-wrap { max-width:100%; overflow-x:auto; overscroll-behavior-x:contain; }
 .table-wrap { margin:20px 0; border:1px solid var(--line); border-radius:7px; }
-table { border-collapse:collapse; width:100%; min-width:630px; font-size:13px; line-height:1.45; font-variant-numeric:tabular-nums; }
+table { border-collapse:collapse; table-layout:fixed; width:100%; font-size:13px; line-height:1.45; font-variant-numeric:tabular-nums; }
 
 .numeric { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; width:1%; }
 th,td { padding:13px 12px; border-bottom:1px solid var(--line); text-align:right; vertical-align:top; }
+thead th.numeric { white-space:normal; width:auto; }
+thead th:first-child { width:25%; }
 thead th { font-weight:700; color:var(--muted); background:var(--surface); }
 th:first-child,td:first-child,th.textual,td.textual { text-align:left; }
-tbody th { font-weight:500; min-width:145px; }
+tbody th { font-weight:500; }
 tbody tr:last-child > * { border-bottom:0; }
 .budget > * { background:var(--tint); }
 .budget th { font-weight:750; }
 .cost-chart { margin:20px 0; }
-.cost-chart figcaption { font-size:13px; font-weight:700; line-height:1.45; color:var(--muted); margin-bottom:14px; }
-.cost-bars { display:grid; gap:14px; font-size:13px; }
+.cost-chart figcaption { font-size:18px; font-weight:700; line-height:1.35; color:var(--ink); margin-bottom:14px; }
+.cost-bars { display:grid; gap:14px; font-size:15px; }
 .cost-row { display:grid; grid-template-columns:180px minmax(0,1fr); align-items:center; gap:16px; }
 .cost-name { min-width:0; }
 .cost-track { width:calc(100% - 7ch - 8px); }
-.cost-bar { display:block; position:relative; width:var(--cost-width); min-width:3px; height:18px; background:var(--bar); }
-.cost-value { position:absolute; left:100%; top:50%; transform:translateY(-50%); margin-left:8px; white-space:nowrap; font-variant-numeric:tabular-nums; color:var(--ink); }
+.cost-bar { display:block; position:relative; width:var(--cost-width); min-width:3px; height:24px; background:var(--bar); }
+.cost-value { font-weight:600; position:absolute; left:100%; top:50%; transform:translateY(-50%); margin-left:8px; white-space:nowrap; font-variant-numeric:tabular-nums; color:var(--bar); }
 .is-budget .cost-bar { background:var(--accent); }
 .is-budget .cost-value { color:var(--accent); }
 .cost-caption { font-size:12px; color:var(--muted); margin:12px 0 0; }
@@ -64,15 +83,8 @@ tbody tr:last-child > * { border-bottom:0; }
 .credentials { font-size:14px; color:var(--muted); }
 .contact { display:inline-block; padding:12px 19px; border:1px solid var(--accent); border-radius:6px; background:var(--accent); color:var(--button-ink); font-size:15px; font-weight:700; text-decoration:none; overflow-wrap:anywhere; }
 .contact:hover { text-decoration:underline; }
-.method { color:var(--muted); font-size:15px; }
+.method ul { color:var(--muted); font-size:15px; }
 footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; overflow-wrap:anywhere; }
-@media (prefers-color-scheme:dark) {
-  :root { color-scheme:dark; --ink:#e6e8eb; --muted:#a3abb5; --line:#2e343b; --accent:#4cc38a; --background:#14171a; --surface:#1b1f23; --tint:#16261d; --button-ink:#0f1411; --bar:#4a525b; }
-  body { background:var(--background); }
-}
-@media screen and (min-width:1000px) {
-  .table-wrap { width:calc(100% + 200px); max-width:none; margin-left:-100px; }
-}
 @media (max-width:600px) {
   main { padding:28px 18px 30px; }
   header { padding-top:18px; }
@@ -90,16 +102,18 @@ footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted);
   .cost-row { grid-template-columns:minmax(0,1fr); gap:6px; }
   table { min-width:0; }
   th:nth-child(3),td:nth-child(3),th:nth-child(4),td:nth-child(4) { display:none; }
-  thead th.numeric { white-space:normal; }
+  thead th:first-child,thead th:nth-child(5) { width:36%; }
+  thead th:nth-child(2) { width:28%; }
   tbody th { min-width:0; }
 }
 @page { size:Letter; margin:.5in .55in; }
 @media print {
-  :root { color-scheme:light; --ink:#1c2127; --muted:#5b6470; --line:#e2e5e9; --accent:#18794e; --background:#ffffff; --surface:#ffffff; --tint:#edf6f0; --button-ink:#ffffff; --bar:#c9ced6; }
   body { background:var(--background); font-size:9.5pt; line-height:1.35; print-color-adjust:exact; -webkit-print-color-adjust:exact; }
   main { max-width:none; margin:0; padding:0; }
   header { padding-top:12px; margin-bottom:17px; }
   h1 { font-size:25pt; margin:10px 0 13px; }
+  h1,h2,h3 { break-after:avoid; }
+  p,li,.callout,.cost-chart,table,.offer-card,.method li { break-inside:avoid; }
   h2 { font-size:15pt; margin-bottom:9px; break-after:avoid; }
   h3 { font-size:11pt; break-after:avoid; }
   p { margin-bottom:9px; }
@@ -129,7 +143,7 @@ footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted);
   .cost-row { grid-template-columns:135px minmax(0,1fr); gap:12px; }
   .cost-bar { height:10px; }
   .cost-caption { font-size:7.5pt; margin-top:7px; }
-  .method { font-size:8pt; }
+  .method ul { font-size:8pt; }
   footer { margin-top:12px; padding-top:10px; font-size:8pt; }
 }
 </style>
@@ -161,17 +175,6 @@ footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted);
 </section>
 <section aria-labelledby="results-title">
 <h2 id="results-title">Results</h2>
-<div class="table-wrap" tabindex="0" role="region" aria-label="Results">
-<table>
-
-<thead><tr><th scope="col" class="textual">Model</th><th scope="col" class="numeric">Correct decisions</th><th scope="col" class="numeric">Note completeness</th><th scope="col" class="numeric">Cost per 1,000 invoices</th><th scope="col" class="numeric">Cost per 100,000 invoices</th></tr></thead>
-<tbody>
-<tr><th scope="row">Gemini 3.8 Flash</th><td class="numeric">100%</td><td class="numeric">91.7%</td><td class="numeric">$14.11</td><td class="numeric">$1,411</td></tr>
-<tr><th scope="row">GPT-6.1 Sol</th><td class="numeric">100%</td><td class="numeric">85.7%</td><td class="numeric">$11.45</td><td class="numeric">$1,145</td></tr>
-<tr class="budget"><th scope="row">Ling 3.0 Flash (budget)</th><td class="numeric">100%</td><td class="numeric">84.5%</td><td class="numeric">$0.17</td><td class="numeric">$17</td></tr>
-</tbody>
-</table>
-</div>
 <figure class="cost-chart" aria-labelledby="cost-chart-title">
 <figcaption id="cost-chart-title">Model cost to review 100,000 invoices</figcaption>
 <div class="cost-bars" role="img" aria-label="Gemini 3.8 Flash: $1,411; GPT-6.1 Sol: $1,145; Ling 3.0 Flash (budget): $17">
@@ -188,6 +191,17 @@ footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted);
 </div>
 <p class="cost-caption">Billed agent cost. Evaluation costs are excluded.</p>
 </figure>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Results">
+<table>
+
+<thead><tr><th scope="col" class="textual">Model</th><th scope="col" class="numeric">Correct decisions</th><th scope="col" class="numeric">Note completeness</th><th scope="col" class="numeric">Cost per 1K invoices</th><th scope="col" class="numeric">Cost per 100K invoices</th></tr></thead>
+<tbody>
+<tr><th scope="row">Gemini 3.8 Flash</th><td class="numeric">100%</td><td class="numeric">91.7%</td><td class="numeric">$14.11</td><td class="numeric">$1,411</td></tr>
+<tr><th scope="row">GPT-6.1 Sol</th><td class="numeric">100%</td><td class="numeric">85.7%</td><td class="numeric">$11.45</td><td class="numeric">$1,145</td></tr>
+<tr class="budget"><th scope="row">Ling 3.0 Flash (budget)</th><td class="numeric">100%</td><td class="numeric">84.5%</td><td class="numeric">$0.17</td><td class="numeric">$17</td></tr>
+</tbody>
+</table>
+</div>
 <p><strong>Where the models differed:</strong> The only difference was how complete the explanation notes were. Gemini 3.8 Flash wrote the most complete notes (91.7%); GPT-6.1 Sol and Ling 3.0 Flash were close (85.7% and 84.5%). For every model, most missed details were in duplicate-invoice notes, such as leaving out the shared invoice number or the vendor. A missed detail never changed a payment decision, and the agent&#39;s instructions weren&#39;t tuned for any model.</p>
 </section>
 <section aria-labelledby="trust-title">
@@ -209,7 +223,7 @@ footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted);
 <article class="offer-card"><h3>Two-week sprint</h3><p>A test suite built on your real workflows that re-runs in your CI whenever you change models or prompts.</p></article>
 </div>
 <p class="credentials">One of our co-founders has designed agentic evaluation tasks and rubrics professionally.</p>
-<a class="contact" href="mailto:WeightedEvals@gmail.com">Contact WeightedEvals@gmail.com</a>
+<a class="contact" href="mailto:WeightedEvals@gmail.com?subject=Free%20teardown">Contact WeightedEvals@gmail.com</a>
 </section>
 <section class="method" aria-labelledby="method-title">
 <h2 id="method-title">Method details</h2>
