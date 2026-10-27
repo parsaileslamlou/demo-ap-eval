@@ -7,10 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>On our invoice tests, the cheapest model was just as accurate</title>
 <style>
-:root {
+:root,:root[data-theme="light"] {
   color-scheme:light;
-  --ink:#173344; --muted:#526675; --line:#cfdad9; --accent:#167166;
-  --background:#f7f7f2; --surface:#ffffff; --tint:#e7f0ea; --button-ink:#ffffff;
+  --ink:#1c2127; --muted:#5b6470; --line:#e2e5e9; --accent:#18794e; --background:#ffffff; --surface:#ffffff; --tint:#edf6f0; --button-ink:#ffffff; --bar:#c9ced6;
 }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--background); color:var(--ink); font:16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
@@ -48,6 +47,17 @@ tbody th { font-weight:500; min-width:145px; }
 tbody tr:last-child > * { border-bottom:0; }
 .budget > * { background:var(--tint); }
 .budget th { font-weight:750; }
+.cost-chart { margin:20px 0; }
+.cost-chart figcaption { font-size:13px; font-weight:700; line-height:1.45; color:var(--muted); margin-bottom:14px; }
+.cost-bars { display:grid; gap:14px; font-size:13px; }
+.cost-row { display:grid; grid-template-columns:180px minmax(0,1fr); align-items:center; gap:16px; }
+.cost-name { min-width:0; }
+.cost-track { width:calc(100% - 7ch - 8px); }
+.cost-bar { display:block; position:relative; width:var(--cost-width); min-width:3px; height:18px; background:var(--bar); }
+.cost-value { position:absolute; left:100%; top:50%; transform:translateY(-50%); margin-left:8px; white-space:nowrap; font-variant-numeric:tabular-nums; color:var(--ink); }
+.is-budget .cost-bar { background:var(--accent); }
+.is-budget .cost-value { color:var(--accent); }
+.cost-caption { font-size:12px; color:var(--muted); margin:12px 0 0; }
 .offer-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:20px 0; }
 .offer-card { border:1px solid var(--line); border-radius:8px; background:var(--surface); padding:20px; }
 .offer-card p { margin:0; }
@@ -57,7 +67,7 @@ tbody tr:last-child > * { border-bottom:0; }
 .method { color:var(--muted); font-size:15px; }
 footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; overflow-wrap:anywhere; }
 @media (prefers-color-scheme:dark) {
-  :root { color-scheme:dark; --ink:#e3eeef; --muted:#b0c2c9; --line:#40555c; --accent:#87d8c7; --background:#142328; --surface:#1b2d33; --tint:#203c3a; --button-ink:#142328; }
+  :root { color-scheme:dark; --ink:#e6e8eb; --muted:#a3abb5; --line:#2e343b; --accent:#4cc38a; --background:#14171a; --surface:#1b1f23; --tint:#16261d; --button-ink:#0f1411; --bar:#4a525b; }
   body { background:var(--background); }
 }
 @media screen and (min-width:1000px) {
@@ -77,6 +87,7 @@ footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted);
   .contact { font-size:14px; padding:12px 15px; }
 }
 @media screen and (width < 600px) {
+  .cost-row { grid-template-columns:minmax(0,1fr); gap:6px; }
   table { min-width:0; }
   th:nth-child(3),td:nth-child(3),th:nth-child(4),td:nth-child(4) { display:none; }
   thead th.numeric { white-space:normal; }
@@ -84,8 +95,8 @@ footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted);
 }
 @page { size:Letter; margin:.5in .55in; }
 @media print {
-  :root { color-scheme:light; --ink:#173344; --muted:#526675; --line:#cfdad9; --accent:#167166; --background:#ffffff; --surface:#ffffff; --tint:#e7f0ea; --button-ink:#ffffff; }
-  body { background:white; font-size:9.5pt; line-height:1.35; print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+  :root { color-scheme:light; --ink:#1c2127; --muted:#5b6470; --line:#e2e5e9; --accent:#18794e; --background:#ffffff; --surface:#ffffff; --tint:#edf6f0; --button-ink:#ffffff; --bar:#c9ced6; }
+  body { background:var(--background); font-size:9.5pt; line-height:1.35; print-color-adjust:exact; -webkit-print-color-adjust:exact; }
   main { max-width:none; margin:0; padding:0; }
   header { padding-top:12px; margin-bottom:17px; }
   h1 { font-size:25pt; margin:10px 0 13px; }
@@ -112,6 +123,12 @@ footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted);
   .credentials { font-size:8.5pt; }
   .contact { font-size:9pt; padding:7px 12px; }
   .stats,.callout,.offer-cards,tr { break-inside:avoid; }
+  .cost-chart { margin:12px 0; break-inside:avoid; }
+  .cost-chart figcaption { font-size:8pt; margin-bottom:8px; }
+  .cost-bars { font-size:8pt; gap:6px; }
+  .cost-row { grid-template-columns:135px minmax(0,1fr); gap:12px; }
+  .cost-bar { height:10px; }
+  .cost-caption { font-size:7.5pt; margin-top:7px; }
   .method { font-size:8pt; }
   footer { margin-top:12px; padding-top:10px; font-size:8pt; }
 }
@@ -155,6 +172,22 @@ footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted);
 </tbody>
 </table>
 </div>
+<figure class="cost-chart" aria-labelledby="cost-chart-title">
+<figcaption id="cost-chart-title">Model cost to review 100,000 invoices</figcaption>
+<div class="cost-bars" role="img" aria-label="Gemini 3.8 Flash: $1,411; GPT-6.1 Sol: $1,145; Ling 3.0 Flash (budget): $17">
+<div class="cost-row">
+<span class="cost-name">Gemini 3.8 Flash</span>
+<div class="cost-track"><span class="cost-bar" style="--cost-width:100.0000%"><span class="cost-value">$1,411</span></span></div>
+</div><div class="cost-row">
+<span class="cost-name">GPT-6.1 Sol</span>
+<div class="cost-track"><span class="cost-bar" style="--cost-width:81.1057%"><span class="cost-value">$1,145</span></span></div>
+</div><div class="cost-row is-budget">
+<span class="cost-name">Ling 3.0 Flash (budget)</span>
+<div class="cost-track"><span class="cost-bar" style="--cost-width:1.2085%"><span class="cost-value">$17</span></span></div>
+</div>
+</div>
+<p class="cost-caption">Billed agent cost. Evaluation costs are excluded.</p>
+</figure>
 <p><strong>Where the models differed:</strong> The only difference was how complete the explanation notes were. Gemini 3.8 Flash wrote the most complete notes (91.7%); GPT-6.1 Sol and Ling 3.0 Flash were close (85.7% and 84.5%). For every model, most missed details were in duplicate-invoice notes, such as leaving out the shared invoice number or the vendor. A missed detail never changed a payment decision, and the agent&#39;s instructions weren&#39;t tuned for any model.</p>
 </section>
 <section aria-labelledby="trust-title">
