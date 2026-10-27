@@ -76,6 +76,12 @@ footer { padding-top:20px; border-top:1px solid var(--line); color:var(--muted);
   .callout { padding:18px; }
   .contact { font-size:14px; padding:12px 15px; }
 }
+@media screen and (width < 600px) {
+  table { min-width:0; }
+  th:nth-child(3),td:nth-child(3),th:nth-child(4),td:nth-child(4) { display:none; }
+  thead th.numeric { white-space:normal; }
+  tbody th { min-width:0; }
+}
 @page { size:Letter; margin:.5in .55in; }
 @media print {
   :root { color-scheme:light; --ink:#173344; --muted:#526675; --line:#cfdad9; --accent:#167166; --background:#ffffff; --surface:#ffffff; --tint:#e7f0ea; --button-ink:#ffffff; }
